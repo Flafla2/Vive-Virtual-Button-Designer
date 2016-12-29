@@ -18,7 +18,7 @@ public class ViveVirtualButtonProfile : ScriptableObject {
                 return _Instance;
 
             var resource = (ViveVirtualButtonProfile)Resources.Load("ViveVirtualButtonProfile");
-            Debug.Log(resource.Buttons.Count);
+            
             if (resource == null)
                 resource = CreateInstance<ViveVirtualButtonProfile>();
             _Instance = resource;
