@@ -4,7 +4,39 @@ using UnityEngine;
 
 public class ViveVirtualButtonManager : MonoBehaviour {
 
+    public static ViveVirtualButtonManager Instance
+    {
+        get
+        {
+            if (_Instance != null)
+                return _Instance;
+
+            var go = new GameObject();
+            go.name = "Vive Virtual Button Manager";
+            _Instance = go.AddComponent<ViveVirtualButtonManager>();
+            return _Instance;
+        }
+    }
+    private static ViveVirtualButtonManager _Instance;
+
     private Dictionary<string, PadAABB> HashedButtons;
+
+    void OnEnable()
+    {
+        if(_Instance != null && _Instance != this)
+        {
+            Debug.LogError("Only one ViveVirtualButtonManager may exist!  Destroying one of them.");
+            Destroy(this);
+            return;
+        }
+        _Instance = this;
+    }
+
+    void OnDisable()
+    {
+        if (_Instance == this)
+            _Instance = null;
+    }
 
     void Awake ()
     {
