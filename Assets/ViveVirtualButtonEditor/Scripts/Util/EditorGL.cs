@@ -182,4 +182,27 @@ public class EditorGL
             GL.Vertex(v);
         GL.End();
     }
+
+    public static void DrawPolyLine(Vector2[] verts, Color color)
+    {
+        if (Event.current == null)
+            return;
+        if (Event.current.type != EventType.repaint)
+            return;
+
+        CreateMaterial();
+        if (lineMaterial == null) return;
+
+        lineMaterial.SetPass(0);
+
+        GL.Begin(GL.LINES);
+        GL.Color(color);
+        for (int x = 0; x < verts.Length - 1; x++)
+        {
+            GL.Vertex(verts[x]);
+            GL.Vertex(verts[x + 1]);
+        }
+            
+        GL.End();
+    }
 }

@@ -12,13 +12,28 @@ MonoBehaviour:
   m_Name: ViveVirtualButtonProfile
   m_EditorClassIdentifier: 
   Buttons:
-  - ButtonName: 
+  - ButtonName: Top Button
     Region:
-      Point1: {x: 0.66, y: 0.57}
-      Point2: {x: 0, y: 0}
+      Point1: {x: -1, y: -1}
+      Point2: {x: 1, y: 0}
       IsPolar: 0
-  - ButtonName: 
+  - ButtonName: Outer Right
     Region:
-      Point1: {x: 0.34, y: 0}
-      Point2: {x: 0.53, y: 2.02}
+      Point1: {x: 1, y: 0}
+      Point2: {x: 0.65, y: 90}
+      IsPolar: 1
+  - ButtonName: Inner Right
+    Region:
+      Point1: {x: 0, y: 90}
+      Point2: {x: 0.65, y: 0}
+      IsPolar: 1
+  - ButtonName: Outer Left
+    Region:
+      Point1: {x: 0.65, y: 90}
+      Point2: {x: 1, y: 180}
+      IsPolar: 1
+  - ButtonName: Inner Left
+    Region:
+      Point1: {x: 0.65, y: 90}
+      Point2: {x: 0, y: 180}
       IsPolar: 1

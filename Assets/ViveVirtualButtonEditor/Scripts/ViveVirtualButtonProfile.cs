@@ -62,6 +62,12 @@ public class ViveVirtualButtonProfile : ScriptableObject {
 #if UNITY_EDITOR
     public void Save()
     {
+        if(Application.isPlaying)
+        {
+            Debug.LogError("Can't save Vive Button Profile while playing!  Save in edit mode.");
+            return;
+        }
+
         string asset = "/ViveVirtualButtonEditor/Resources/ViveVirtualButtonProfile.asset";
         if(!File.Exists(Application.dataPath + asset))
             AssetDatabase.CreateAsset(this, "Assets/"+asset);
