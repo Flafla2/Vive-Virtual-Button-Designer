@@ -23,6 +23,8 @@ public class ViveVirtualButtonEditor : EditorWindow {
 
     private SerializedProperty p_buttons;
 
+    private List<bool> ShouldDrawPreview;
+
     public void Init()
     {
         Undo.undoRedoPerformed += () => Repaint();
@@ -32,6 +34,10 @@ public class ViveVirtualButtonEditor : EditorWindow {
 
         var o_profile = new SerializedObject(ViveVirtualButtonProfile.Instance);
         p_buttons = o_profile.FindProperty("Buttons");
+
+        ShouldDrawPreview = new List<bool>();
+        for (int x = 0; x < ViveVirtualButtonProfile.Instance.Buttons.Count; x++)
+            ShouldDrawPreview.Add(true);
     }
 
     private Vector2 scrollPosition = Vector2.zero;
@@ -102,6 +108,9 @@ public class ViveVirtualButtonEditor : EditorWindow {
             GUILayout.MaxHeight(position.height),
             GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 
+        GUIStyle checkbox = new GUIStyle(EditorStyles.toggle);
+        checkbox.stretchHeight = true;
+        checkbox.alignment = TextAnchor.MiddleCenter;
         
         for (int x = 0; x < profile.Buttons.Count; x++)
         {
@@ -112,10 +121,13 @@ public class ViveVirtualButtonEditor : EditorWindow {
             else
                 GUILayout.Label(cur.ButtonName, bold_wrap);
 
-            if(GUILayout.Button("-", GUILayout.MaxWidth(25)))
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("-", GUILayout.MaxWidth(25)))
             {
                 Undo.RecordObject(profile, "Remove Button");
                 profile.Buttons.RemoveAt(x);
+                ShouldDrawPreview.RemoveAt(x);
                 x--;
                 continue;
             }
@@ -128,6 +140,8 @@ public class ViveVirtualButtonEditor : EditorWindow {
                 Undo.RecordObject(profile, "Change Button Name");
                 cur.ButtonName = newName;
             }
+
+            ShouldDrawPreview[x] = EditorGUILayout.Toggle("Draw Preview Graphic", ShouldDrawPreview[x]);
 
             EditorGUI.BeginChangeCheck();
             bool newIsPolar = EditorGUILayout.Toggle("Is Polar Coordinate", cur.Region.IsPolar);
@@ -183,6 +197,8 @@ public class ViveVirtualButtonEditor : EditorWindow {
             nxt.ButtonName = "";
             nxt.Region = new PadAABB();
             profile.Buttons.Add(nxt);
+
+            ShouldDrawPreview.Add(true);
         }
 
         EditorGUILayout.EndScrollView();
@@ -196,6 +212,9 @@ public class ViveVirtualButtonEditor : EditorWindow {
 
         for(int i=0; i<profile.Buttons.Count;i++)
         {
+            if (!ShouldDrawPreview[i])
+                continue;
+
             var btn = profile.Buttons[i];
 
             float hue = ((0.1f * i) % 1.0f) * 0.85f;

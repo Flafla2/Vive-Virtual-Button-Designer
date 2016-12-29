@@ -34,6 +34,6 @@ MonoBehaviour:
       IsPolar: 1
   - ButtonName: Inner Left
     Region:
-      Point1: {x: 0.65, y: 90}
-      Point2: {x: 0, y: 180}
+      Point1: {x: 0, y: 90}
+      Point2: {x: 0.65, y: 180}
       IsPolar: 1
