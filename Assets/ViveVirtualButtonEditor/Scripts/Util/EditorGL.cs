@@ -164,22 +164,25 @@ public class EditorGL
         GL.End();
     }
 
-    public static void DrawTriangleStrip(Vector2[] verts, Color color)
+    public static void DrawTriangleStrip(Vector2[] verts, Color color, int len = -1)
     {
         if (Event.current == null)
             return;
         if (Event.current.type != EventType.repaint)
             return;
 
-        CreateMaterial();
+        if (len < 0)
+            len = verts.Length;
+
+            CreateMaterial();
         if (lineMaterial == null) return;
 
         lineMaterial.SetPass(0);
 
         GL.Begin(GL.TRIANGLE_STRIP);
         GL.Color(color);
-        foreach (Vector2 v in verts)
-            GL.Vertex(v);
+        for (int x = 0; x < len; x++)
+            GL.Vertex(verts[x]);
         GL.End();
     }
 

@@ -25,6 +25,8 @@ public class ViveVirtualButtonEditor : EditorWindow {
 
     private List<bool> ShouldDrawPreview;
 
+    private Vector2[] v_buf;
+
     public void Init()
     {
         Undo.undoRedoPerformed += () => Repaint();
@@ -38,6 +40,8 @@ public class ViveVirtualButtonEditor : EditorWindow {
         ShouldDrawPreview = new List<bool>();
         for (int x = 0; x < ViveVirtualButtonProfile.Instance.Buttons.Count; x++)
             ShouldDrawPreview.Add(true);
+
+        v_buf = new Vector2[2 * ((int)Mathf.Ceil(360f / PolarAngleVertLimit) + 1)];
     }
 
     private Vector2 scrollPosition = Vector2.zero;
@@ -207,6 +211,11 @@ public class ViveVirtualButtonEditor : EditorWindow {
 
         GUILayout.EndVertical();
 
+        // Rendering the preview graphic //
+        
+        if (Event.current.type != EventType.Repaint)
+            return;
+
         Vector2 center = new Vector2(TouchpadCenX * GraphicRect.width, TouchpadCenY * GraphicRect.height) + GraphicRect.position;
         Vector2 dim = new Vector2(PadDimX * GraphicRect.width, PadDimY * GraphicRect.height);
 
@@ -223,66 +232,22 @@ public class ViveVirtualButtonEditor : EditorWindow {
             float hue_bdr = ((0.1f * (i+1)) % 1.0f) * 0.85f;
             Color bdr = Color.HSVToRGB(hue, 0.9f, 1);
 
-            if (btn.Region.IsPolar)
-            {
-                float min_r = Mathf.Min(btn.Region.Point1.x, btn.Region.Point2.x);
-                float max_r = Mathf.Max(btn.Region.Point1.x, btn.Region.Point2.x);
-                float min_t = Mathf.Min(btn.Region.Point1.y, btn.Region.Point2.y);
-                float max_t = Mathf.Max(btn.Region.Point1.y, btn.Region.Point2.y);
+            int len;
+            btn.Region.MakeButtonMesh(ref v_buf, out len, PolarAngleVertLimit);
 
-                int PolarVertCount = (int)Mathf.Ceil((max_t - min_t) / PolarAngleVertLimit) + 1;
-                Vector2[] upperset = new Vector2[PolarVertCount];
-                Vector2[] lowerset = new Vector2[PolarVertCount];
-
-                int x = 0;
-                for (float l=min_t;l<max_t;l+=PolarAngleVertLimit)
-                {
-                    lowerset[x] = PadAABB.ToEuclidean(new Vector2(min_r, l));
-                    upperset[x] = PadAABB.ToEuclidean(new Vector2(max_r, l));
-
-                    x++;
-                }
-
-                Debug.Assert(x == PolarVertCount || x == PolarVertCount - 1);
-                lowerset[PolarVertCount - 1] = PadAABB.ToEuclidean(new Vector2(min_r, max_t));
-                upperset[PolarVertCount - 1] = PadAABB.ToEuclidean(new Vector2(max_r, max_t));
-
-                for(x = 0; x < PolarVertCount; x++)
-                {
-                    lowerset[x].x = lowerset[x].x * dim.x / 2 + center.x;
-                    lowerset[x].y = lowerset[x].y * dim.y / 2 + center.y;
-                    upperset[x].x = upperset[x].x * dim.x / 2 + center.x;
-                    upperset[x].y = upperset[x].y * dim.y / 2 + center.y;
-                }
-
-                Vector2[] strip = new Vector2[PolarVertCount * 2];
-                for(x=0;x<PolarVertCount;x++)
-                {
-                    strip[2 * x] = lowerset[x];
-                    strip[2 * x + 1] = upperset[x];
-                }
-
-                EditorGL.DrawTriangleStrip(strip, clr);
-                EditorGL.DrawPolyLine(upperset, bdr);
-                EditorGL.DrawPolyLine(lowerset, bdr);
-                EditorGL.DrawLine(upperset[0], lowerset[0], bdr, 1);
-                EditorGL.DrawLine(upperset[PolarVertCount-1], lowerset[PolarVertCount - 1], bdr, 1);
-            } else
-            {
-                float top = Mathf.Min(btn.Region.Point1.y, btn.Region.Point2.y) * dim.y / 2 + center.y;
-                float left = Mathf.Min(btn.Region.Point1.x, btn.Region.Point2.x) * dim.x / 2 + center.x;
-                float bot = Mathf.Max(btn.Region.Point1.y, btn.Region.Point2.y) * dim.y / 2 + center.y;
-                float right = Mathf.Max(btn.Region.Point1.x, btn.Region.Point2.x) * dim.x / 2 + center.x;
-
-                Vector2 TL = new Vector2(left, top);
-                Vector2 TR = new Vector2(right, top);
-                Vector2 BL = new Vector2(left, bot);
-                Vector2 BR = new Vector2(right, bot);
-
-                EditorGL.DrawTriangle(TL, TR, BL, clr);
-                EditorGL.DrawTriangle(TR, BR, BL, clr);
-                EditorGL.DrawPolyLine(new Vector2[] { TL, TR, BR, BL, TL }, bdr);
+            for (int x = 0; x < len; x++) {
+                v_buf[x].x = v_buf[x].x * dim.x / 2f + center.x;
+                v_buf[x].y = v_buf[x].y * dim.y / 2f + center.y;
             }
+
+            EditorGL.DrawTriangleStrip(v_buf, clr, len);
+            for(int x = 0; x < len / 2 - 1; x++)
+            {
+                EditorGL.DrawLine(v_buf[2 * x], v_buf[2 * (x + 1)], bdr, 1);
+                EditorGL.DrawLine(v_buf[2 * x + 1], v_buf[2 * (x + 1) + 1], bdr, 1);
+            }
+            EditorGL.DrawLine(v_buf[0], v_buf[1], bdr, 1);
+            EditorGL.DrawLine(v_buf[len-1], v_buf[len-2], bdr, 1);
         }
     }
 }

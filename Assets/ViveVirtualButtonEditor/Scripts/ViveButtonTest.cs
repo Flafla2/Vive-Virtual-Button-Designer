@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using Valve.VR;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +9,6 @@ public class ViveButtonTest : MonoBehaviour {
 
     public Text DebugText;
 	
-	// Update is called once per frame
 	void Update () {
         string output = "";
 
@@ -29,5 +28,7 @@ public class ViveButtonTest : MonoBehaviour {
         }
 
         DebugText.text = output;
+
+        
 	}
 }

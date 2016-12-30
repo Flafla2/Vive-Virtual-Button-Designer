@@ -71,4 +71,9 @@ public class ViveVirtualButtonManager : MonoBehaviour {
 
         return touchpad.x > left && touchpad.x < right && touchpad.y > top && touchpad.y < bot;
     }
+
+    public PadAABB GetButtonRegion(string buttonName)
+    {
+        return HashedButtons[buttonName];
+    }
 }
