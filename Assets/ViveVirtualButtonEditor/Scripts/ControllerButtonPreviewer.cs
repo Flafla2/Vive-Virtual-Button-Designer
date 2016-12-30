@@ -1,4 +1,5 @@
 ﻿using Valve.VR;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ using UnityEngine;
 public class ControllerButtonPreviewer : MonoBehaviour {
 
     [SerializeField]
-    private string[] Buttons;
+    private ButtonVisualData[] Buttons;
     [SerializeField]
     private GameObject ButtonPrefab;
     [SerializeField]
@@ -61,18 +62,19 @@ public class ControllerButtonPreviewer : MonoBehaviour {
             MeshRenderer renderer = spawned.GetComponent<MeshRenderer>();
             if (renderer == null)
                 renderer = spawned.AddComponent<MeshRenderer>();
+            renderer.material = b.ButtonMaterial;
 
             ButtonObjectData data;
             data.anim = anim;
             data.obj = spawned;
             data.filter = filter;
             data.renderer = renderer;
-            ButtonDataSet.Add(b, data);
+            ButtonDataSet.Add(b.ButtonName, data);
 
             ButtonPreviewRenderer prev = spawned.GetComponent<ButtonPreviewRenderer>();
             if (prev == null)
                 prev = spawned.AddComponent<ButtonPreviewRenderer>();
-            prev.ButtonName = b;
+            prev.ButtonName = b.ButtonName;
         }
 
         Initialized = true;
@@ -107,9 +109,9 @@ public class ControllerButtonPreviewer : MonoBehaviour {
         bool press = ipt.GetPress(EVRButtonId.k_EButton_SteamVR_Touchpad);
         foreach (var b in Buttons)
         {
-            var data = ButtonDataSet[b];
+            var data = ButtonDataSet[b.ButtonName];
 
-            if (touch && ViveVirtualButtonManager.Instance.GetButtonHover(b, _TrackedController))
+            if (touch && ViveVirtualButtonManager.Instance.GetButtonHover(b.ButtonName, _TrackedController))
             {
                 data.anim.SetBool(h_hover, true);
                 data.anim.SetBool(h_press, press);
@@ -142,4 +144,11 @@ public class ControllerButtonPreviewer : MonoBehaviour {
         public MeshFilter filter;
         public MeshRenderer renderer;
     }
+}
+
+[Serializable]
+public class ButtonVisualData
+{
+    public string ButtonName;
+    public Material ButtonMaterial;
 }
