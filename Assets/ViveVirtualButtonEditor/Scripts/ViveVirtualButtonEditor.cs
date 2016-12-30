@@ -27,6 +27,8 @@ public class ViveVirtualButtonEditor : EditorWindow {
 
     private Vector2[] v_buf;
 
+    private bool Initialized = false;
+
     public void Init()
     {
         Undo.undoRedoPerformed += () => Repaint();
@@ -42,12 +44,17 @@ public class ViveVirtualButtonEditor : EditorWindow {
             ShouldDrawPreview.Add(true);
 
         v_buf = new Vector2[2 * ((int)Mathf.Ceil(360f / PolarAngleVertLimit) + 1)];
+
+        Initialized = true;
     }
 
     private Vector2 scrollPosition = Vector2.zero;
 
     void OnGUI()
     {
+        if (!Initialized)
+            Init();
+
         var skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/ViveVirtualButtonEditor/Art/Window.guiskin");
         var s_texture = skin.customStyles[0];
 
