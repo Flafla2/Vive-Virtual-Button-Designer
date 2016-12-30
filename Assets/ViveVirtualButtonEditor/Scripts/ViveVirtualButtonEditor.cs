@@ -91,11 +91,11 @@ public class ViveVirtualButtonEditor : EditorWindow {
 
         GUILayout.EndHorizontal();
 
-        if(GUILayout.Button("Save Configuration"))
-        {
-            profile.Save();
-            Debug.Log("Saved Vive Virtual Button Configuration");
-        }
+        //if(GUILayout.Button("Save Configuration"))
+        //{
+        //    profile.Save();
+        //    Debug.Log("Saved Vive Virtual Button Configuration");
+        //}
 
         //if(GUILayout.Button("Force Reload Configuration"))
         //{
@@ -140,6 +140,7 @@ public class ViveVirtualButtonEditor : EditorWindow {
                 profile.Buttons.RemoveAt(x);
                 ShouldDrawPreview.RemoveAt(x);
                 x--;
+                EditorUtility.SetDirty(profile);
                 continue;
             }
             GUILayout.EndHorizontal();
@@ -150,6 +151,7 @@ public class ViveVirtualButtonEditor : EditorWindow {
             {
                 Undo.RecordObject(profile, "Change Button Name");
                 cur.ButtonName = newName;
+                EditorUtility.SetDirty(profile);
             }
 
             ShouldDrawPreview[x] = EditorGUILayout.Toggle("Draw Preview Graphic", ShouldDrawPreview[x]);
@@ -160,6 +162,7 @@ public class ViveVirtualButtonEditor : EditorWindow {
             {
                 Undo.RecordObject(profile, "Change Button Is Polar");
                 cur.Region.IsPolar = newIsPolar;
+                EditorUtility.SetDirty(profile);
             }
 
             EditorGUI.BeginChangeCheck();
@@ -179,6 +182,7 @@ public class ViveVirtualButtonEditor : EditorWindow {
                     cur.Region.Point1.x = Mathf.Clamp(cur.Region.Point1.x, -1, 1);
                     cur.Region.Point1.y = Mathf.Clamp(cur.Region.Point1.y, -1, 1);
                 }
+                EditorUtility.SetDirty(profile);
             }
 
             EditorGUI.BeginChangeCheck();
@@ -198,6 +202,7 @@ public class ViveVirtualButtonEditor : EditorWindow {
                     cur.Region.Point2.x = Mathf.Clamp(cur.Region.Point2.x, -1, 1);
                     cur.Region.Point2.y = Mathf.Clamp(cur.Region.Point2.y, -1, 1);
                 }
+                EditorUtility.SetDirty(profile);
             }
         }
 
@@ -210,6 +215,7 @@ public class ViveVirtualButtonEditor : EditorWindow {
             profile.Buttons.Add(nxt);
 
             ShouldDrawPreview.Add(true);
+            EditorUtility.SetDirty(profile);
         }
 
         EditorGUILayout.EndScrollView();
