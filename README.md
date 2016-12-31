@@ -13,7 +13,7 @@ are useful for creating circular buttons, such as the ones in the above graphic.
 I have also included a tool to visualize the virtual buttons themselves in VR.  This allows the player to more easily
 see what they are selecting:
 
-![](https://thumbs.gfycat.com/DamagedUnlinedArcticwolf-size_restricted.gif)
+[![](https://thumbs.gfycat.com/DamagedUnlinedArcticwolf-size_restricted.gif)](https://gfycat.com/DamagedUnlinedArcticwolf)
 
 ## Getting Started
 
